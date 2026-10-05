@@ -1,0 +1,72 @@
+export type ReadmeSection = { heading: string; body: string; items?: string[] };
+
+export type Project = {
+  number: string;
+  title: string;
+  kicker: string;
+  readmeUrl?: string;
+  screenshots: string[];
+  github?: string;
+  live?: string;
+  accent: "blue" | "yellow" | "black";
+};
+
+// Add a project by supplying its README path, screenshot paths, and links.
+// The renderer only shows information that exists in the README.
+export const projects: Project[] = [
+  {
+    number: "01",
+    title: "OFFSCRIPT",
+    kicker: "A blogging and social publishing platform",
+    readmeUrl: "/projects/offscript/offscript.md",
+    live: "https://offscript-blogs.vercel.app/",
+    screenshots: [
+      "/projects/offscript/offscript-blogs.vercel.app_home.png",
+      "/projects/offscript/offscript-blogs.vercel.app_my-posts.png",
+      "/projects/offscript/offscript-blogs.vercel.app_profile.png",
+      "/projects/offscript/offscript-blogs.vercel.app_admin.png",
+      "/projects/offscript/offscript-blogs.vercel.app_home-light.png"
+    ],
+    accent: "blue",
+  },
+  {
+    number: "02",
+    title: "LONESTUDY",
+    kicker: "a gamified Pomodoro and task-tracking app with YouTube music",
+    readmeUrl: "/projects/lonestudy/lonestudy.md",
+    screenshots: [
+      "/projects/lonestudy/lonestudy.vercel.app_.png",
+      "/projects/lonestudy/lonestudy.vercel.app_focus.png",
+      "/projects/lonestudy/lonestudy.vercel.app_todo.png",
+      "/projects/lonestudy/lonestudy.vercel.app_settings.png",
+      "/projects/lonestudy/lonestudy.vercel.app_profile.png"
+    ],
+    accent: "yellow",
+  },
+  {
+    number: "03",
+    title: "HAWKWATCH",
+    kicker: "README / AWAITING PROJECT CONTENT",
+    readmeUrl: "/projects/hawkwatch/hawkwatch.md",
+    screenshots: [
+      "/projects/hawkwatch/landing.gif", 
+      "projects/hawkwatch/gallary.gif"
+    ],
+    accent: "black",
+  },
+];
+
+export const stack = {
+  FRONTEND: ["React", "Next.js", "Javascript", "TypeScript", "Tailwind CSS"],
+  BACKEND: ["Node.js", "Express", "FastAPI"],
+  DATABASE: ["PostgreSQL", "MongoDB", "Supabase"],
+  LANGUAGES: ["JavaScript", "Java", "Python", "C++"],
+  TOOLS: ["Git", "Docker", "Linux", "Nginx", "Microsoft Azure"],
+};
+
+export const buildLog = [
+  ["01", "LEARNING", "DSA + system design"],
+  ["02", "BUILDING", "Useful software, one release at a time"],
+  ["03", "EXPLORING", "Web / backend / AI"],
+  ["04", "STATUS", "Open to interesting problems"],
+];
