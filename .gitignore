@@ -1,2 +1,35 @@
+# Dependencies
 /node_modules
-node_modules
+
+# Next.js build output
+/.next/
+/out/
+/build/
+*.tsbuildinfo
+
+# Test coverage
+/coverage/
+
+# Local environment variables and secrets
+.env*
+!.env.example
+*.pem
+
+# Vercel local project metadata
+/.vercel/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor and operating system files
+.DS_Store
+.idea/
+.vscode/
+
+# Local Codex workspace metadata
+/.agents/
+.aws/
+.codex/

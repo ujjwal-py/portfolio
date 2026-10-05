@@ -34,6 +34,33 @@ button {
 p {
   line-height: 1.5;
 }
+.status-page {
+  min-height: 100vh;
+  padding: 14vh 8vw;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(17, 17, 17, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.08) 1px, transparent 1px),
+    var(--paper);
+  background-size: 28px 28px;
+}
+.status-page h1 {
+  margin: 28px 0;
+  font-size: clamp(4.5rem, 14vw, 12rem);
+  letter-spacing: -0.11em;
+  line-height: 0.78;
+}
+.status-page h1 span {
+  color: var(--blue);
+}
+.status-page p {
+  max-width: 420px;
+  margin: 0 0 32px;
+  font-size: 18px;
+}
 .mono,
 .eyebrow,
 .section-label,

@@ -1,4 +1,0 @@
-{
-  "/api/github-commits/route": "app/api/github-commits/route.js",
-  "/page": "app/page.js"
-}
