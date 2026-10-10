@@ -1,25 +1,6 @@
 # Offscript
 
-Offscript is a fullstack blogging and social publishing platform built with React, TypeScript, Express, Prisma, PostgreSQL, and Supabase. Users can create drafts, submit posts for moderation, manage published content, search and like public posts, upload images, and authenticate securely with JWT cookies. Administrators can review pending submissions, approve or reject content, and remove published posts when necessary.
-
-## Project structure
-
-```text
-offscript/
-├── client/                 # React + Vite frontend
-│   ├── src/components/     # Reusable UI components
-│   ├── src/pages/          # Route-level pages
-│   ├── src/hooks/          # Custom React hooks
-│   ├── src/store/          # Zustand stores
-│   └── vercel.json         # SPA route fallback for Vercel
-├── server/                 # Express + Prisma backend
-│   ├── prisma/             # Prisma schema and migrations
-│   ├── src/routes/         # API route definitions and controllers
-│   ├── src/middlewares/    # Authentication, validation, and uploads
-│   ├── src/lib/            # Prisma and Supabase clients
-│   └── .env.example        # Backend environment variable template
-└── README.md
-```
+Offscript is a full-stack social publishing platform built with Next.js. Users can create and manage posts, submit content for moderation, publish approved posts, search content, interact through likes, and manage profiles.
 
 ## Features
 
@@ -85,192 +66,305 @@ offscript/
 - Centralized backend custom errors and error codes
 - Centralized Axios error toasts for API and network failures
 
-### User interface
+## Next.js Features
 
-- Chakra UI component-based interface
-- Tailwind CSS utility classes for layout and responsive grids
-- Responsive desktop and mobile layouts
-- Dark and light theme switching
-- Chakra loading screens with contextual messages
-- Chakra toast notifications for success, API, and network errors
-- Full-screen post dialogues for viewing, editing, and moderation
+### App Router
 
-## Tech stack
+The project uses the Next.js App Router under `src/app/`, including:
 
-### Frontend
+- `/`
+- `/home`
+- `/auth`
+- `/profile`
+- `/my-posts`
+- `/post/[id]`
+- `/admin`
 
-| Technology       | Purpose                                  |
-| ---------------- | ---------------------------------------- |
-| React            | UI library                               |
-| React DOM        | React browser rendering                  |
-| TypeScript       | Static typing                            |
-| Vite             | Development server and build tool        |
-| Chakra UI        | Component library and responsive styling |
-| Tailwind CSS     | Utility-first CSS                        |
-| React Router DOM | Client-side routing                      |
-| Zustand          | Global state management                  |
-| Axios            | HTTP requests                            |
-| React Icons      | Icons                                    |
+Special route files include:
 
-### Backend
+- `page.tsx`
+- `layout.tsx`
+- `loading.tsx`
+- `error.tsx`
+- `not-found.tsx`
+- `route.ts`
 
-| Technology           | Version         | Purpose                           |
-| -------------------- | --------------- | --------------------------------- |
-| Node.js              | LTS recommended | JavaScript runtime                |
-| Express              | `^5.2.1`        | HTTP server and API routing       |
-| TypeScript           | `^7.0.2`        | Static typing and compilation     |
-| Prisma               | `^7.9.1`        | ORM and generated database client |
-| PostgreSQL           | Supabase-hosted | Relational database               |
-| `@prisma/adapter-pg` | `^7.9.1`        | Prisma PostgreSQL adapter         |
-| Supabase JS          | `^2.116.0`      | Supabase Storage integration      |
-| JSON Web Token       | `^9.0.3`        | JWT creation and verification     |
-| bcrypt               | `^6.0.0`        | Password hashing                  |
-| cookie-parser        | `^1.4.7`        | Authentication cookie parsing     |
-| cors                 | `^2.8.6`        | Cross-origin frontend access      |
-| Zod                  | `^4.5.4`        | Request validation                |
-| Multer               | `^2.3.0`        | Multipart image uploads           |
-| tsx                  | `^4.23.12`      | Running TypeScript directly       |
+### Server and Client Components
 
-## Prerequisites
+Server Components handle:
 
-- Node.js 20+ recommended
-- npm
-- A PostgreSQL database, such as Supabase Postgres
-- A Supabase project if image storage is enabled
+- Database queries
+- Server-side authentication
+- Home feed rendering
+- Profile and post data
+- Admin moderation data
+- Search and pagination
 
-## Local setup
+Client Components handle:
 
-```bash
-git clone https://github.com/ujjwal-py/typescript-social-media.git
-cd offscript
+- Authentication forms
+- Theme switching
+- Navigation and mobile sidebar interactions
+- Like/unlike actions
+- Post forms
+- Dialogs
+- Toast notifications
+- Optimistic UI updates
 
-cd server
-npm install --include=dev
+### Route Handlers
 
-cd ../client
-npm install
+Backend APIs are implemented with Next.js Route Handlers under `src/app/v1/` using `GET`, `POST`, `PUT`, and `DELETE`.
+
+### API Routes
+
+| Method | Endpoint                     | Authentication |
+| ------ | ---------------------------- | -------------- |
+| GET    | `/v1`                        | Public         |
+| POST   | `/v1/signup`                 | Public         |
+| POST   | `/v1/signin`                 | Public         |
+| GET    | `/v1/me`                     | Required       |
+| POST   | `/v1/logout`                 | Required       |
+| GET    | `/v1/posts`                  | Public         |
+| GET    | `/v1/posts/:id`              | Public         |
+| POST   | `/v1/post`                   | Required       |
+| PUT    | `/v1/posts/:id`              | Required       |
+| DELETE | `/v1/post/:id`               | Required       |
+| GET    | `/v1/user/posts/unpublished` | Required       |
+| GET    | `/v1/user/posts/published`   | Required       |
+| GET    | `/v1/search/posts`           | Public         |
+| GET    | `/v1/user/search/posts`      | Required       |
+| POST   | `/v1/posts/:id/like`         | Required       |
+| DELETE | `/v1/posts/:id/dislike`      | Required       |
+| GET    | `/v1/admin/posts/pending`    | Admin          |
+| PUT    | `/v1/admin/posts/:id/status` | Admin          |
+| DELETE | `/v1/admin/posts/:id`        | Admin          |
+
+### Dynamic Routes
+
+Dynamic segments support individual post pages and post-specific API operations:
+
+- `src/app/post/[id]/page.tsx`
+- `src/app/v1/post/[id]/route.ts`
+- `src/app/v1/posts/[id]/route.ts`
+- `src/app/v1/admin/posts/[id]/route.ts`
+
+### Loading and Error Boundaries
+
+Route-level `loading.tsx` files provide loading UI while server content is rendered. Global error and 404 handling are implemented with `error.tsx` and `not-found.tsx`.
+
+### Proxy Route Protection
+
+`src/proxy.ts` protects `/profile`, `/my-posts`, and `/admin` by redirecting requests without an authentication cookie to `/auth`. Server-side JWT and role validation remains authoritative.
+
+### Metadata, Fonts, and Images
+
+- Next.js Metadata API provides page titles and descriptions.
+- `next/font/google` loads the Share Tech font.
+- `next/image` provides optimized responsive post images.
+- Typed route props use types such as `PageProps` and `LayoutProps`.
+- URL search parameters drive search, sorting, and pagination.
+- Turbopack supports fast local development.
+
+## Authentication and Authorization
+
+### JWT Authentication
+
+JWTs are generated with `jose` and contain:
+
+```ts
+{
+  user_id: string;
+  role: "USER" | "ADMIN";
+}
 ```
 
-The server's `postinstall` script runs `prisma generate` automatically. The generated Prisma client is placed under `server/src/generated/prisma` and is not committed to Git.
+Tokens expire after 24 hours and are stored in the `jwt_token` HTTP-only cookie with `sameSite` protection and production `secure` settings.
 
-## Backend environment variables
+The authentication flow is:
 
-Create `server/.env` from `server/.env.example`:
-
-```env
-PORT=3000
-DATABASE_URL="postgresql://user:password@host:5432/database?schema=public"
-JWT_SECRET="replace-with-a-long-random-secret"
-NODE_ENV="development"
-FRONTEND_URL="http://localhost:5173"
-SUPABASE_URL="https://your-project.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="your-server-side-service-role-key"
-SUPABASE_BUCKET="your-storage-bucket-name"
+```text
+Credentials
+  -> POST /v1/signin or /v1/signup
+  -> Zod validation
+  -> bcrypt credential verification or user creation
+  -> JWT generation
+  -> HTTP-only cookie
+  -> router.refresh()
+  -> getAuthUser()
+  -> Prisma user lookup
+  -> UserProvider
+  -> client components
 ```
 
-Never expose `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, or `JWT_SECRET` in frontend code or commit them to Git.
+`getAuthUser()` reads and verifies the cookie, extracts the user ID, and loads the user from PostgreSQL. `requireAuthUser()` and `requireAdminUser()` independently protect API operations.
 
-## Frontend environment variables
+### User Context
 
-Create `client/.env`:
+The server-loaded user is passed from the root layout to `UserProvider`. Client components access it with `useUser()`.
 
-```env
-VITE_BASE_URL=http://localhost:3000
+The context is used by:
+
+- The navbar for authenticated and admin navigation
+- The mobile sidebar for user-specific links
+- The like button for current-user like state and sign-in prompts
+
+The context is for UI access only; server-side JWT verification is the security boundary.
+
+## Backend Features
+
+### Prisma and PostgreSQL
+
+Prisma 7 provides database access through the PostgreSQL adapter. The schema contains:
+
+- `User`: identity, password hash, role, and timestamps
+- `Posts`: title, description, author, image URL, status, and timestamps
+- `Likes`: user/post relationships with duplicate prevention
+
+Relationships include:
+
+```text
+User 1 ---- many Posts
+User 1 ---- many Likes
+Posts 1 ---- many Likes
 ```
 
-The Axios client automatically appends `/v1`, so the value should not include `/v1`.
+The database uses Prisma migrations for schema evolution, including roles, post statuses, images, timestamps, and likes.
 
-## Run locally
+### Password Security
 
-Open two terminals.
+`bcryptjs` hashes passwords during signup and compares hashes during signin. Plaintext passwords and password hashes are never returned to clients.
 
-### Backend
+### Post Lifecycle
 
-```bash
-cd server
-npm run dev
+```text
+DRAFT -> PENDING -> PUBLISHED
+                  -> REJECTED
+                  -> REMOVED
 ```
 
-The API runs on `http://localhost:3000` by default.
+Ownership checks ensure users can only edit or delete their own posts. Admins can review pending content, approve or reject submissions, and remove published posts.
 
-### Frontend
+### Validation and Errors
 
-```bash
-cd client
-npm run dev
+Zod validates user, post, status, like, and query parameters before database operations. Centralized custom errors provide consistent HTTP statuses, messages, and error codes.
+
+### Search and Pagination
+
+The backend supports title search for public posts, user posts, and admin content. Results support:
+
+- Sorting by likes
+- Sorting by last updated time
+- Ascending and descending order
+- URL-driven pagination
+- Nine posts per home feed page
+
+### Likes and Optimistic UI
+
+Authenticated users can like and unlike published posts. Backend authentication, post validation, and the database constraint `@@unique([userId, postId])` prevent invalid or duplicate likes.
+
+Zustand stores client-side like state so the UI updates immediately while the server remains the source of truth.
+
+### Supabase Storage
+
+Supabase Storage handles post images with:
+
+- JPEG, PNG, and WebP validation
+- A 5 MB upload limit
+- Server-side upload handling
+- Image URL persistence
+- Replacement-image cleanup
+- Rollback cleanup when database writes fail
+
+Sensitive Supabase credentials remain server-side.
+
+## UI and UX
+
+- Tailwind CSS v4 provides responsive styling.
+- Base UI and shadcn-style components provide accessible controls.
+- Sonner provides success and error toast notifications.
+- Lucide React provides interface icons.
+- `next-themes` manages dark mode and the warm cream light theme.
+- Responsive navigation includes desktop links and a mobile dialog sidebar.
+- Post cards include optimized images, titles, dates, descriptions, and like counts.
+
+## Technology Stack
+
+| Technology           | Purpose                       |
+| -------------------- | ----------------------------- |
+| Next.js 16           | Full-stack React framework    |
+| React 19             | UI and Server Components      |
+| TypeScript           | Static typing                 |
+| Tailwind CSS v4      | Styling and responsive design |
+| Base UI              | Accessible UI primitives      |
+| Prisma 7             | Database ORM                  |
+| PostgreSQL           | Relational database           |
+| `@prisma/adapter-pg` | PostgreSQL driver adapter     |
+| `jose`               | JWT signing and verification  |
+| `bcryptjs`           | Password hashing              |
+| Zod                  | Request validation            |
+| Supabase Storage     | Image storage                 |
+| Zustand              | Client-side optimistic state  |
+| `next-themes`        | Theme management              |
+| Sonner               | Toast notifications           |
+| Lucide React         | Icons                         |
+
+## Project Structure
+
+```text
+offscript-next/
+├── prisma/
+│   ├── migrations/
+│   └── schema.prisma
+├── public/
+│   └── uploads/
+├── src/
+│   ├── app/
+│   │   ├── admin/
+│   │   ├── auth/
+│   │   ├── home/
+│   │   ├── my-posts/
+│   │   ├── post/[id]/
+│   │   ├── profile/
+│   │   ├── v1/
+│   │   ├── error.tsx
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── loading.tsx
+│   │   └── not-found.tsx
+│   ├── components/
+│   │   ├── ui/
+│   │   ├── auth-form.tsx
+│   │   ├── navbar.tsx
+│   │   ├── post-card.tsx
+│   │   ├── post-form.tsx
+│   │   ├── like-button.tsx
+│   │   └── user-provider.tsx
+│   ├── hooks/
+│   ├── lib/
+│   │   ├── api.ts
+│   │   ├── auth.ts
+│   │   ├── errors.ts
+│   │   ├── prisma.ts
+│   │   ├── route-utils.ts
+│   │   ├── validation.ts
+│   │   └── services/
+│   ├── store/
+│   │   └── like-store.ts
+│   └── proxy.ts
+├── next.config.ts
+├── prisma.config.ts
+├── package.json
+└── tsconfig.json
 ```
 
-The Vite development server runs on `http://localhost:5173` by default.
+## Security Model
 
-## Available scripts
-
-### Frontend
-
-```bash
-npm run dev       # Start Vite development server
-npm run build     # Type-check and create production build
-npm run lint      # Run ESLint
-npm run preview   # Preview the production build locally
-```
-
-### Backend
-
-```bash
-npm run dev       # Start nodemon with tsx
-npm run build     # TypeScript build/type-check
-npm start         # Start the server with tsx
-npm test          # Placeholder test script
-```
-
-## Database and Prisma
-
-The Prisma schema is located at `server/prisma/schema.prisma`.
-
-```bash
-cd server
-npx prisma generate
-npx prisma migrate dev --name describe-your-change
-npx prisma migrate deploy
-```
-
-Use `migrate dev` for local schema changes. Use `migrate deploy` in production after migrations have been committed. The `postinstall` script only runs `prisma generate`; it does not modify database tables or data.
-
-## API routes
-
-The API is mounted under `/v1`.
-
-### Authentication
-
-| Method | Route        | Auth     |
-| ------ | ------------ | -------- |
-| `POST` | `/v1/signup` | Public   |
-| `POST` | `/v1/signin` | Public   |
-| `GET`  | `/v1/me`     | Required |
-| `POST` | `/v1/logout` | Required |
-
-### Posts
-
-| Method   | Route              | Auth     |
-| -------- | ------------------ | -------- |
-| `GET`    | `/v1/posts`        | Public   |
-| `GET`    | `/v1/public-posts` | Public   |
-| `GET`    | `/v1/unpublished`  | Required |
-| `GET`    | `/v1/published`    | Required |
-| `GET`    | `/v1/user-posts`   | Required |
-| `POST`   | `/v1/post`         | Required |
-| `PUT`    | `/v1/post/:id`     | Required |
-| `DELETE` | `/v1/post/:id`     | Required |
-| `POST`   | `/v1/like/:id`     | Required |
-| `DELETE` | `/v1/dislike/:id`  | Required |
-
-### Admin
-
-| Method   | Route                 |
-| -------- | --------------------- |
-| `DELETE` | `/v1/post-admin/:id`  |
-| `PUT`    | `/v1/post-status/:id` |
-| `GET`    | `/v1//pending-posts`  |
-
----
-
-Built with care by [Ujjwal](https://github.com/ujjwal-py) · [View more projects on GitHub](https://github.com/ujjwal-py)
+- JWTs are stored in HTTP-only cookies.
+- Client context is used for UI state, not authorization.
+- Server Components validate authentication before rendering protected content.
+- API routes independently verify JWTs.
+- Admin routes verify the `ADMIN` role.
+- Ownership checks prevent unauthorized post operations.
+- Passwords are stored using bcrypt hashes.
+- Sensitive database, JWT, and Supabase credentials remain server-side.
+- Zod validation rejects malformed input before database operations.

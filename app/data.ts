@@ -19,13 +19,14 @@ export const projects: Project[] = [
     title: "OFFSCRIPT",
     kicker: "A blogging and social publishing platform",
     readmeUrl: "/projects/offscript/offscript.md",
-    live: "https://offscript-blogs.vercel.app/",
+    live: "https://offscript-next.vercel.app/",
+    github: "https://github.com/ujjwal-py/offscript-next",
     screenshots: [
-      "/projects/offscript/offscript-blogs.vercel.app_home.png",
-      "/projects/offscript/offscript-blogs.vercel.app_my-posts.png",
-      "/projects/offscript/offscript-blogs.vercel.app_profile.png",
-      "/projects/offscript/offscript-blogs.vercel.app_admin.png",
-      "/projects/offscript/offscript-blogs.vercel.app_home-light.png"
+      "/projects/offscript/home.png",
+      "/projects/offscript/my-posts.png",
+      "/projects/offscript/profile.png",
+      "/projects/offscript/admin.png",
+
     ],
     accent: "blue",
   },
@@ -34,6 +35,8 @@ export const projects: Project[] = [
     title: "LONESTUDY",
     kicker: "a gamified Pomodoro and task-tracking app with YouTube music",
     readmeUrl: "/projects/lonestudy/lonestudy.md",
+    github: "https://github.com/ujjwal-py/LoneStudyV2",
+    live: "https://lonestudy.vercel.app/",
     screenshots: [
       "/projects/lonestudy/lonestudy.vercel.app_.png",
       "/projects/lonestudy/lonestudy.vercel.app_focus.png",
@@ -49,7 +52,7 @@ export const projects: Project[] = [
     kicker: "README / AWAITING PROJECT CONTENT",
     readmeUrl: "/projects/hawkwatch/hawkwatch.md",
     screenshots: [
-      "/projects/hawkwatch/landing.gif", 
+      "/projects/hawkwatch/landing.gif",
       "projects/hawkwatch/gallary.gif"
     ],
     accent: "black",
