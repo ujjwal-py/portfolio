@@ -4,12 +4,49 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
   --paper: #f4f3ee;
   --ink: #111;
   --blue: #2455ff;
+  --blue-fill: #2455ff;
+  --on-blue: #ffffff;
+  --on-accent: #111;
   --yellow: #f5d547;
+  --yellow-fill: #f5d547;
   --line: #171717;
+  --surface: #ffffff;
+  --muted: #606060;
+  --code-bg: #deddd7;
+  --nav-bg: rgba(244, 243, 238, 0.94);
+  --grid-line: rgba(17, 17, 17, 0.08);
+  --panel-shadow: rgba(17, 17, 17, 0.12);
+  --dot-halo: #c7f7d8;
 }
+
+/* Dark theme. Every colour below is a token, so the whole page flips
+   by changing the data-theme attribute on <html>. */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0b0d11;
+  --ink: #f2f1ec;
+  --blue: #7d96ff;
+  --blue-fill: #1c3a9c;
+  --on-blue: #ffffff;
+  --on-accent: #111;
+  /* Bright yellow stays for accent text and log labels; the filled
+     Problem Solving block uses a deeper amber so it does not glare. */
+  --yellow: #f5d547;
+  --yellow-fill: #b8912a;
+  --line: #f2f1ec;
+  --surface: #14171d;
+  --muted: #8b97a5;
+  --code-bg: #232a34;
+  --nav-bg: rgba(11, 13, 17, 0.94);
+  --grid-line: rgba(242, 241, 236, 0.09);
+  --panel-shadow: rgba(0, 0, 0, 0.55);
+  --dot-halo: rgba(31, 189, 90, 0.28);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -21,6 +58,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: "Space Grotesk", Arial, sans-serif;
+  transition: background 0.25s, color 0.25s;
 }
 a {
   text-decoration: none;
@@ -42,8 +80,8 @@ p {
   align-items: flex-start;
   justify-content: center;
   background:
-    linear-gradient(rgba(17, 17, 17, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17, 17, 17, 0.08) 1px, transparent 1px),
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
     var(--paper);
   background-size: 28px 28px;
 }
@@ -92,7 +130,7 @@ footer,
   gap: 42px;
   position: sticky;
   top: 0;
-  background: rgba(244, 243, 238, 0.94);
+  background: var(--nav-bg);
   backdrop-filter: blur(10px);
   z-index: 20;
 }
@@ -129,12 +167,37 @@ footer i {
   background: #1fbd5a;
   display: inline-block;
   border-radius: 50%;
-  box-shadow: 0 0 0 3px #c7f7d8;
+  box-shadow: 0 0 0 3px var(--dot-halo);
 }
 .menu-toggle {
   display: none;
   background: none;
   border: 0;
+}
+.theme-toggle {
+  border: 2px solid var(--line);
+  background: var(--surface);
+  padding: 10px 12px;
+  font: 11px "DM Mono", monospace;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+.theme-toggle:hover {
+  background: var(--blue-fill);
+  border-color: var(--blue-fill);
+  color: var(--on-blue);
+}
+/* The label is driven by the applied attribute, so it is correct on the
+   very first paint (before hydration) and never flashes. */
+.theme-when-dark {
+  display: none;
+}
+[data-theme="dark"] .theme-when-light {
+  display: none;
+}
+[data-theme="dark"] .theme-when-dark {
+  display: inline;
 }
 .section-grid {
   display: grid;
@@ -152,8 +215,7 @@ footer i {
 }
 .hero h1,
 .section-heading-row h2,
-.about h2,
-.github h2,
+.resume h2,
 .contact h2 {
   font-size: clamp(4.8rem, 10vw, 10rem);
   letter-spacing: -0.1em;
@@ -189,9 +251,9 @@ footer i {
   box-shadow: 5px 5px 0 var(--line);
 }
 .button-blue {
-  background: var(--blue);
-  color: white;
-  border-color: var(--blue);
+  background: var(--blue-fill);
+  color: var(--on-blue);
+  border-color: var(--blue-fill);
 }
 .arrow {
   font-size: 18px;
@@ -213,7 +275,7 @@ footer i {
   flex-direction: column;
   font: 12px/1.7 "DM Mono", monospace;
   overflow: hidden;
-  box-shadow: 8px 8px 0 rgba(17, 17, 17, 0.12);
+  box-shadow: 8px 8px 0 var(--panel-shadow);
 }
 .hero-terminal-bar,
 .hero-terminal-footer {
@@ -480,15 +542,13 @@ footer i {
   margin-bottom: 65px;
 }
 .section-heading-row h2,
-.about h2,
-.github h2,
+.resume h2,
 .contact h2 {
   font-size: clamp(4rem, 8vw, 8rem);
   margin: 0;
 }
 .section-heading-row h2 span,
-.about h2 span,
-.github h2 span,
+.resume h2 span,
 .contact h2 span {
   color: var(--blue);
 }
@@ -550,13 +610,12 @@ footer i {
 .project-card-footer span {
   font: 11px "DM Mono";
 }
-.about-layout,
-.github-layout {
+.resume-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10vw;
 }
-.about-copy {
+.resume-copy {
   padding-top: 18px;
 }
 .large-copy {
@@ -578,7 +637,7 @@ footer i {
   gap: 9px;
 }
 .metadata-grid span {
-  color: #606060;
+  color: var(--muted);
 }
 .metadata-grid strong {
   font-size: 13px;
@@ -604,10 +663,11 @@ footer i {
   border: 1px solid var(--line);
   padding: 8px 10px;
   font-size: 13px;
-  background: white;
+  background: var(--surface);
 }
 .metrics {
-  background: var(--yellow);
+  background: var(--yellow-fill);
+  color: var(--on-accent);
 }
 .metrics-grid {
   display: grid;
@@ -636,7 +696,7 @@ footer i {
 .terminal {
   background: #111;
   color: #f4f3ee;
-  border: 2px solid #111;
+  border: 2px solid var(--line);
 }
 .terminal-bar {
   padding: 15px 18px;
@@ -685,28 +745,9 @@ footer i {
 .log-commit b {
   text-transform: uppercase;
 }
-.github {
-  background: white;
-}
-.github-layout pre {
-  background: #111;
-  color: #fff;
-  padding: 25px;
-  font: 15px "DM Mono";
-  line-height: 1.8;
-  border-left: 7px solid var(--blue);
-  margin: 0 0 25px;
-}
-.github-layout pre span {
-  color: #62a6ff;
-}
-.github-layout pre em {
-  color: var(--yellow);
-  font-style: normal;
-}
 .contact {
-  background: var(--blue);
-  color: #fff;
+  background: var(--blue-fill);
+  color: var(--on-blue);
   min-height: 600px;
 }
 .contact h2 {
@@ -720,7 +761,7 @@ footer i {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-top: 2px solid #fff;
+  border-top: 2px solid var(--on-blue);
   padding-top: 20px;
 }
 .contact-bottom p {
@@ -837,6 +878,32 @@ footer .brand {
   font: 11px "DM Mono";
   padding: 0 7px;
 }
+.resume-viewer {
+  margin: 0 5vw;
+  border: 2px solid var(--line);
+  background: #0d1117;
+  min-height: 480px;
+}
+.resume-viewer object {
+  display: block;
+  width: 100%;
+  height: 68vh;
+  min-height: 480px;
+  border: 0;
+  background: #fff;
+}
+.resume-fallback {
+  padding: 35px 30px;
+  background: var(--paper);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.resume-fallback p {
+  max-width: 420px;
+  margin: 18px 0 0;
+}
 .dialog-body {
   padding: 35px 5vw 65px;
 }
@@ -876,7 +943,7 @@ footer .brand {
   text-underline-offset: 3px;
 }
 .readme-content code {
-  background: #deddd7;
+  background: var(--code-bg);
   padding: 2px 5px;
   font:
     12px "DM Mono",
@@ -887,6 +954,7 @@ footer .brand {
   overflow: auto;
   background: #111;
   color: #f4f3ee;
+  border: 2px solid var(--line);
   border-left: 5px solid var(--blue);
   padding: 22px;
   margin: 20px 0;
@@ -917,7 +985,7 @@ footer .brand {
   border-collapse: collapse;
   min-width: 100%;
   font-size: 13px;
-  background: #fff;
+  background: var(--surface);
 }
 .readme-content th,
 .readme-content td {
@@ -935,7 +1003,7 @@ footer .brand {
   text-transform: uppercase;
 }
 .empty-readme {
-  border: 2px dashed #777;
+  border: 2px dashed var(--muted);
   padding: 25px;
   max-width: 700px;
 }
@@ -974,6 +1042,9 @@ footer .brand {
   .availability {
     display: none;
   }
+  .theme-toggle {
+    padding: 7px 9px;
+  }
   .section-grid {
     display: block;
   }
@@ -1003,8 +1074,7 @@ footer .brand {
     margin-bottom: 48px;
   }
   .section-heading-row,
-  .about-layout,
-  .github-layout {
+  .resume-layout {
     display: block;
   }
   .section-heading-row p {
@@ -1028,8 +1098,7 @@ footer .brand {
     display: block;
     margin-top: 12px;
   }
-  .about h2,
-  .github h2 {
+  .resume h2 {
     font-size: clamp(4rem, 17vw, 7rem);
     margin-bottom: 40px;
   }
@@ -1108,6 +1177,18 @@ footer .brand {
   }
   .gallery > img {
     height: 270px;
+  }
+  .resume-viewer {
+    margin: 0 20px;
+    min-height: 320px;
+  }
+  .resume-viewer object {
+    height: 58vh;
+    min-height: 320px;
+  }
+  .resume-fallback {
+    min-height: 320px;
+    padding: 25px 20px;
   }
   .dialog-body {
     padding: 25px 20px 50px;

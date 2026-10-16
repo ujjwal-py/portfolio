@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { buildLog, Project, projects, stack } from "./data";
+import { buildLog, Project, projects, resume, stack } from "./data";
 
 function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return (
@@ -46,7 +46,18 @@ function HeroTerminal() {
       setCommand("");
       return;
     } else if (normalized === "help") {
-      lines = ["Available commands:", "help  about  projects  contact  clear"];
+      lines = [
+        "Available commands:",
+        "help  about  resume  projects  contact  clear",
+      ];
+    } else if (normalized === "resume") {
+      lines = [
+        "Ujjwal Kumar / resume.pdf",
+        `Revision ${resume.updated} · ${resume.pages} page`,
+        <a key="resume" href={resume.file} target="_blank" rel="noreferrer">
+          Open document ↗
+        </a>,
+      ];
     } else if (normalized === "about") {
       lines = ["Ujjwal is a computer science student and full-stack developer", "building useful software and exploring web, backend, and AI."];
     } else if (normalized === "projects") {
@@ -84,7 +95,7 @@ function HeroTerminal() {
           <span className="terminal-cursor" aria-hidden="true" />
         </form>
       </div>
-      <div className="hero-terminal-footer"><span>TRY: HELP / ABOUT / PROJECTS / CONTACT / CLEAR</span><span>UTF-8</span></div>
+      <div className="hero-terminal-footer"><span>TRY: HELP / ABOUT / RESUME / PROJECTS / CONTACT / CLEAR</span><span>UTF-8</span></div>
     </div>
   );
 }
@@ -485,6 +496,115 @@ function ProjectDialog({
   );
 }
 
+function ResumeDialog({ onClose }: { onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeRef.current?.focus();
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="dialog-backdrop"
+      role="presentation"
+      onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+    >
+      <article
+        className="dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resume-title"
+      >
+        <header className="dialog-header">
+          <div>
+            <span className="mono">DOCUMENT / RESUME</span>
+            <span className="mono">REV / {resume.updated}</span>
+          </div>
+          <button ref={closeRef} className="close-button" onClick={onClose}>
+            × CLOSE
+          </button>
+        </header>
+        <div className="dialog-title-row">
+          <div>
+            <span className="eyebrow">
+              CURRICULUM VITAE / {resume.pages} PAGE
+            </span>
+            <h2 id="resume-title">RESUME</h2>
+          </div>
+          <div className="dialog-links">
+            <a href={resume.file} target="_blank" rel="noreferrer">
+              [ OPEN IN NEW TAB <Arrow diagonal /> ]
+            </a>
+            <a href={resume.file} download={resume.fileName}>
+              [ DOWNLOAD PDF ↓ ]
+            </a>
+          </div>
+        </div>
+        <div className="resume-viewer">
+          <object
+            data={`${resume.file}#view=FitH`}
+            type="application/pdf"
+            aria-label={`${resume.fileName} document preview`}
+          >
+            <div className="resume-fallback">
+              <span className="mono">PDF / INLINE VIEWER UNAVAILABLE</span>
+              <p>
+                This browser cannot display the document inline.{" "}
+                <a
+                  className="readme-link"
+                  href={resume.file}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open it in a new tab
+                </a>{" "}
+                or{" "}
+                <a
+                  className="readme-link"
+                  href={resume.file}
+                  download={resume.fileName}
+                >
+                  download the PDF
+                </a>
+                .
+              </p>
+            </div>
+          </object>
+        </div>
+        <div className="dialog-body">
+          <section className="readme-section">
+            <h3>Get a copy</h3>
+            <div className="readme-content">
+              <p>
+                Read the document above, or save a copy to share with an
+                application. The file is a {resume.pages}-page PDF, last
+                revised {resume.updated}.
+              </p>
+              <a
+                className="button button-blue"
+                href={resume.file}
+                download={resume.fileName}
+              >
+                [ DOWNLOAD PDF <Arrow diagonal /> ]
+              </a>
+            </div>
+          </section>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 function ProjectCard({
   project,
   onOpen,
@@ -513,6 +633,7 @@ function ProjectCard({
 
 export default function Home() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [resumeOpen, setResumeOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [recentCommits, setRecentCommits] = useState<RecentCommit[]>([]);
 
@@ -541,6 +662,20 @@ export default function Home() {
     };
   }, []);
 
+  // Theme lives on the <html> element (set pre-paint by the script in
+  // app/layout.tsx), so read the current value from the DOM when toggling.
+  // The button's label is CSS-driven off the same attribute.
+  function toggleTheme() {
+    const root = document.documentElement;
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try {
+      window.localStorage.setItem("theme", next);
+    } catch {
+      // Private mode or blocked storage: the theme still applies for this visit.
+    }
+  }
+
   return (
     <main>
       <nav className="nav">
@@ -561,11 +696,11 @@ export default function Home() {
           <a href="#work" onClick={() => setMenuOpen(false)}>
             02 WORK
           </a>
-          <a href="#about" onClick={() => setMenuOpen(false)}>
-            03 ABOUT
-          </a>
           <a href="#stack" onClick={() => setMenuOpen(false)}>
-            04 STACK
+            03 STACK
+          </a>
+          <a href="#resume" onClick={() => setMenuOpen(false)}>
+            04 RESUME
           </a>
           <a href="#contact" onClick={() => setMenuOpen(false)}>
             CONTACT
@@ -574,6 +709,14 @@ export default function Home() {
         <span className="availability">
           <i /> AVAILABLE
         </span>
+        <button
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label="Switch between light and dark theme"
+        >
+          <span className="theme-when-light">☾ DARK</span>
+          <span className="theme-when-dark">☀ LIGHT</span>
+        </button>
       </nav>
       <section id="home" className="hero section-grid">
         <div className="hero-copy">
@@ -672,15 +815,58 @@ export default function Home() {
           ))}
         </div>
       </section>
-      <section id="about" className="about section-pad">
-        <SectionLabel number="02">THE BUILDER</SectionLabel>
-        <div className="about-layout">
+      <section id="stack" className="stack section-pad">
+        <SectionLabel number="02">TOOLS OF THE TRADE</SectionLabel>
+        <div className="section-heading-row">
           <h2>
-            ABOUT
+            THE
+            <br />
+            <span>STACK.</span>
+          </h2>
+          <p>
+            The tools in my current working vocabulary. Always learning, always
+            refining.
+          </p>
+        </div>
+        <div className="stack-grid">
+          {Object.entries(stack).map(([category, tools]) => (
+            <div className="stack-group" key={category}>
+              <h3>{category}</h3>
+              <div>
+                {tools.map((tool) => (
+                  <span key={tool}>{tool}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="metrics section-pad">
+        <SectionLabel number="03">PROBLEM SOLVING</SectionLabel>
+        <div className="metrics-grid">
+          <div className="metric">
+            <strong>DSA</strong>
+            <span>THE DAILY PRACTICE</span>
+          </div>
+          <div className="metric">
+            <strong>C++</strong>
+            <span>PRIMARY LANGUAGE</span>
+          </div>
+          <div className="metric">
+            <strong>∞</strong>
+            <span>PROBLEMS TO SOLVE</span>
+          </div>
+        </div>
+      </section>
+      <section id="resume" className="resume section-pad">
+        <SectionLabel number="04">THE DOCUMENT</SectionLabel>
+        <div className="resume-layout">
+          <h2>
+            RESUME
             <br />
             <span>THE BUILDER.</span>
           </h2>
-          <div className="about-copy">
+          <div className="resume-copy">
             <p className="large-copy">
               I like understanding how systems work and then making them simpler,
               sharper, and more useful.
@@ -708,49 +894,21 @@ export default function Home() {
                 <strong>INDIA</strong>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-      <section id="stack" className="stack section-pad">
-        <SectionLabel number="03">TOOLS OF THE TRADE</SectionLabel>
-        <div className="section-heading-row">
-          <h2>
-            THE
-            <br />
-            <span>STACK.</span>
-          </h2>
-          <p>
-            The tools in my current working vocabulary. Always learning, always
-            refining.
-          </p>
-        </div>
-        <div className="stack-grid">
-          {Object.entries(stack).map(([category, tools]) => (
-            <div className="stack-group" key={category}>
-              <h3>{category}</h3>
-              <div>
-                {tools.map((tool) => (
-                  <span key={tool}>{tool}</span>
-                ))}
-              </div>
+            <div className="cta-row">
+              <button
+                className="button button-blue"
+                onClick={() => setResumeOpen(true)}
+              >
+                [ VIEW RESUME <Arrow /> ]
+              </button>
+              <a
+                className="button"
+                href={resume.file}
+                download={resume.fileName}
+              >
+                [ DOWNLOAD PDF <Arrow diagonal /> ]
+              </a>
             </div>
-          ))}
-        </div>
-      </section>
-      <section className="metrics section-pad">
-        <SectionLabel number="04">PROBLEM SOLVING</SectionLabel>
-        <div className="metrics-grid">
-          <div className="metric">
-            <strong>DSA</strong>
-            <span>THE DAILY PRACTICE</span>
-          </div>
-          <div className="metric">
-            <strong>C++</strong>
-            <span>PRIMARY LANGUAGE</span>
-          </div>
-          <div className="metric">
-            <strong>∞</strong>
-            <span>PROBLEMS TO SOLVE</span>
           </div>
         </div>
       </section>
@@ -795,38 +953,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="github section-pad">
-        <SectionLabel number="06">CODE / OPEN SOURCE</SectionLabel>
-        <div className="github-layout">
-          <h2>
-            CODE IS
-            <br />
-            <span>THE MEDIUM.</span>
-          </h2>
-          <div>
-            <pre>
-              <code>
-                <span>const</span> idea = <em>&quot;curiosity&quot;</em>;<br />
-                <span>while</span> (idea) &#123;
-                <br /> build();
-                <br /> learn();
-                <br />
-                &#125;
-              </code>
-            </pre>
-            <a
-              className="button button-blue"
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-            >
-              [ OPEN GITHUB <Arrow diagonal /> ]
-            </a>
-          </div>
-        </div>
-      </section>
       <section id="contact" className="contact section-pad">
-        <div className="contact-label">07 / CONTACT</div>
+        <div className="contact-label">06 / CONTACT</div>
         <h2>
           LET&apos;S BUILD
           <br />
@@ -865,6 +993,7 @@ export default function Home() {
           onClose={() => setActiveProject(null)}
         />
       )}
+      {resumeOpen && <ResumeDialog onClose={() => setResumeOpen(false)} />}
     </main>
   );
 }

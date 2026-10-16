@@ -67,6 +67,14 @@ export const stack = {
   TOOLS: ["Git", "Docker", "Linux", "Nginx", "Microsoft Azure"],
 };
 
+// The resume PDF lives in /public. Update `file` if the document is renamed.
+export const resume = {
+  file: "/resume.pdf",
+  fileName: "Ujjwal_Kumar_Resume.pdf",
+  updated: "OCT 2026",
+  pages: "01",
+};
+
 export const buildLog = [
   ["01", "LEARNING", "DSA + system design"],
   ["02", "BUILDING", "Useful software, one release at a time"],
